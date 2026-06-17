@@ -1,0 +1,13 @@
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    volumes:
+      - /srv/plex/config:/config
+      - /srv/plex/media:/data
+    network_mode: host
+    restart: always
+    environment:
+      - PLEX_CLAIM="nope"
+      - PUID=${PUID}
+      - PGID=${PGID}

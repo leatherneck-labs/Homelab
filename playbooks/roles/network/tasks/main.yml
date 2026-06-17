@@ -1,0 +1,21 @@
+- name: Ensure pihole directory exists
+  file:
+    path: /opt/pihole
+    state: directory
+    owner: "{{ hostvars['localhost'].deploy_user }}"
+    group: "{{ hostvars['localhost'].deploy_user }}"
+    mode: '0755'
+
+- name: Deploy pihole docker-compose template
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/pihole/docker-compose.yml
+    owner: "{{ hostvars['localhost'].deploy_user }}"
+    group: "{{ hostvars['localhost'].deploy_user }}"
+    mode: '0644'
+
+- name: Start pihole container
+  community.docker.docker_compose_v2:
+    project_src: /opt/pihole
+    state: present
+    

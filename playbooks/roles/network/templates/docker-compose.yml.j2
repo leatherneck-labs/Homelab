@@ -1,0 +1,37 @@
+services:
+  unbound:
+    container_name: unbound
+    image: mvance/unbound:latest
+    volumes:
+      # This links your local folder to the Unbound config path
+      - ./unbound-config:/opt/unbound-config/
+    networks:
+      private_network:
+        ipv4_address: 172.20.0.7
+    restart: unless-stopped
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    networks:
+      private_network:
+        ipv4_address: 172.20.0.3
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "80:80/tcp"
+    environment:
+      TZ: 'UTC' # Change to your timezone
+      WEBPASSWORD: "{{ pihole_password }}" # Change this to a secure password
+      DNS1: '172.20.0.7#53' # Tells Pi-hole to use Unbound
+      DNS2: 'no'
+    volumes:
+      - './etc-pihole:/etc/pihole'
+      - './etc-dnsmasq.d:/etc/dnsmasq.d'
+    restart: unless-stopped
+
+networks:
+  private_network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

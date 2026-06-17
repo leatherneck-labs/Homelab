@@ -1,0 +1,12 @@
+- name: Ensure the sudo package is installed
+  ansible.builtin.apt:
+    name: sudo
+    state: present
+    update_cache: yes
+
+- name: Add the user to the sudo group
+  ansible.builtin.user:
+    name: "{{ hostvars['localhost'].deploy_user }}"
+    groups: sudo
+    append: yes
+
