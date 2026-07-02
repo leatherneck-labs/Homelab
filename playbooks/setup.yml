@@ -9,11 +9,6 @@
     - name: pihole_password
       prompt: "Enter the admin password for pihole"
       private: yes
-  tasks:
-    - name: Set deploy_user and pihole_password as facts for other plays
-      set_fact:
-        deploy_user: "{{ deploy_user }}"
-        pihole_password: "{{ pihole_password }}"
 
 - name: Bootstrap base packages as root
   hosts: all
@@ -24,22 +19,28 @@
     - base
     - users
 
+- name: Install Docker on all hosts
+  hosts: all
+  remote_user: "{{ hostvars['localhost'].deploy_user }}"
+  become: true
+  become_method: sudo
+  roles:
+    - docker_apps
+
 - name: Network host setup
   hosts: network
   remote_user: "{{ hostvars['localhost'].deploy_user }}"
   become: true
-  become_method: "{{ become_method_setting | default('sudo') }}"
+  become_method: sudo
   vars:
     pihole_password: "{{ hostvars['localhost'].pihole_password }}"
   roles:
-    - docker_apps
     - network
 
 - name: Media host setup
   hosts: media
   remote_user: "{{ hostvars['localhost'].deploy_user }}"
   become: true
-  become_method: "{{ become_method_setting | default('sudo') }}"
+  become_method: sudo
   roles:
-    - docker_apps
     - media

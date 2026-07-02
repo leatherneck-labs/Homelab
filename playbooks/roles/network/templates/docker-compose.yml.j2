@@ -22,7 +22,7 @@ services:
       - "80:80/tcp"
     environment:
       TZ: 'UTC' # Change to your timezone
-      WEBPASSWORD: "{{ pihole_password }}" # Change this to a secure password
+      FTLCONF_webserver_api_password: "{{ pihole_password }}"
       DNS1: '172.20.0.7#53' # Tells Pi-hole to use Unbound
       DNS2: 'no'
     volumes:
